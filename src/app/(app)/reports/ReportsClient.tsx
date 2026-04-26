@@ -74,7 +74,7 @@ export default function ReportsClient({ employees, sites }: { employees:Emp[]; s
     if (!eid) return
     const {data,error} = await sb.from('attendance').select('date,status,advance_amount,comment,site:sites(name)').eq('employee_id',eid).gte('date',monthStart(m)).lte('date',monthEnd(m)).order('date')
     if (error) throw error
-    setLedgerData((data??[]) as LedgerRow[])
+    setLedgerData((data??[]) as unknown as LedgerRow[])
   },[]) // eslint-disable-line
 
   const fetchSiteDetail = useCallback(async (sid:string, m:string) => {
@@ -86,9 +86,9 @@ export default function ReportsClient({ employees, sites }: { employees:Emp[]; s
       sb.from('site_expenses').select('date,description,category,amount').eq('site_id',sid).gte('date',ms).lte('date',me).order('date'),
     ])
     if (a.error) throw a.error
-    setSiteAtt((a.data??[]) as SiteDetailAtt[])
-    setSiteES((e.data??[]) as SiteDetailES[])
-    setSiteSE((s.data??[]) as SiteDetailSE[])
+    setSiteAtt((a.data??[]) as unknown as SiteDetailAtt[])
+    setSiteES((e.data??[]) as unknown as SiteDetailES[])
+    setSiteSE((s.data??[]) as unknown as SiteDetailSE[])
   },[]) // eslint-disable-line
 
   useEffect(() => {
