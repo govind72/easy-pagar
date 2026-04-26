@@ -139,16 +139,15 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
   , [employees, search])
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="pb-24">
 
-      {/* ── Sticky header ──────────────────────────────── */}
-      {/* top-14 md:top-0: on mobile, stick BELOW the fixed hamburger button   */}
-      {/* (hamburger is fixed top-3, ~44px tall → 14*4=56px clears it safely). */}
-      {/* On desktop the sidebar is a column so top-0 is correct.              */}
-      <div className="sticky top-14 md:top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
+      {/* ── Header — scrolls with content, not sticky ──── */}
+      {/* User can scroll down to hide it, scroll up to see it. */}
+      <div className="bg-white border-b border-gray-200 shadow-sm">
 
         {/* Date navigator */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 gap-3">
+          {/* ← Previous day */}
           <button
             type="button"
             onClick={() => goDate(-1)}
@@ -159,7 +158,35 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
             </svg>
           </button>
-          <span className="text-sm font-semibold text-gray-800">{fmtDate(initialDate)}</span>
+
+          {/* Date label + picker
+               The input sits ABOVE the visual button (z-10, opacity-0).
+               Tapping anywhere on the label area directly hits the input,
+               so the browser opens its native date picker without JS trickery. */}
+          <div className="relative flex-1 flex justify-center">
+            {/* Visual button — purely decorative, pointer-events blocked by input on top */}
+            <div className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-800 bg-gray-50 border border-gray-200">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              {fmtDate(initialDate)}
+            </div>
+            {/* Transparent input ON TOP — direct click target, opens native picker.
+                 opacity: 0.001 (not 0) = browser treats as visible → dispatches clicks. */}
+            <input
+              type="date"
+              value={initialDate}
+              max={today}
+              onChange={e => {
+                const v = e.target.value
+                if (v && v <= today) router.push(`/attendance?date=${v}`)
+              }}
+              className="absolute inset-0 z-10 w-full h-full cursor-pointer"
+              style={{ opacity: 0.001 }}
+            />
+          </div>
+
+          {/* → Next day */}
           <button
             type="button"
             onClick={() => goDate(1)}
@@ -204,8 +231,8 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
         </div>
       </div>
 
-      {/* ── Employee rows — pb-32 clears the fixed save bar at bottom ── */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 pb-32 space-y-2">
+      {/* ── Employee rows — pb-24 already on outer div, clears save bar ── */}
+      <div className="px-4 sm:px-6 py-3 space-y-2">
         {visible.length === 0 && (
           <p className="py-12 text-center text-sm text-gray-400">
             {search ? 'No employees match your search.' : 'No active employees found.'}
