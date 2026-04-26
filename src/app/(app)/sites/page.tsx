@@ -1,10 +1,27 @@
-export default function SitesPage() {
-  return (
-    <div className="flex h-full items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold text-gray-700">Sites</h1>
-        <p className="mt-1 text-sm text-gray-400">Coming soon</p>
+import { cookies } from 'next/headers'
+import { createClient } from '@/lib/supabase/server'
+import SitesClient from './SitesClient'
+import type { Site } from '@/lib/types'
+
+export const metadata = { title: 'Sites — EasyPagar' }
+
+export default async function SitesPage() {
+  const cookieStore = await cookies()
+  const supabase = createClient(cookieStore)
+
+  const { data: sites, error } = await supabase
+    .from('sites')
+    .select('*')
+    .order('is_active', { ascending: false })
+    .order('name', { ascending: true })
+
+  if (error) {
+    return (
+      <div className="p-8 text-sm text-red-500">
+        Failed to load sites: {error.message}
       </div>
-    </div>
-  )
+    )
+  }
+
+  return <SitesClient sites={(sites ?? []) as Site[]} />
 }
