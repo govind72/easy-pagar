@@ -139,10 +139,13 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
   , [employees, search])
 
   return (
-    <div className="flex flex-col min-h-full">
+    <div className="flex flex-col h-full">
 
       {/* ── Sticky header ──────────────────────────────── */}
-      <div className="sticky top-0 z-10 bg-white border-b border-gray-200 shadow-sm">
+      {/* top-14 md:top-0: on mobile, stick BELOW the fixed hamburger button   */}
+      {/* (hamburger is fixed top-3, ~44px tall → 14*4=56px clears it safely). */}
+      {/* On desktop the sidebar is a column so top-0 is correct.              */}
+      <div className="sticky top-14 md:top-0 z-20 bg-white border-b border-gray-200 shadow-sm">
 
         {/* Date navigator */}
         <div className="flex items-center justify-between px-4 sm:px-6 py-3 gap-3">
@@ -201,8 +204,8 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
         </div>
       </div>
 
-      {/* ── Employee rows ──────────────────────────────── */}
-      <div className="flex-1 px-4 sm:px-6 py-3 pb-28 space-y-2">
+      {/* ── Employee rows — pb-32 clears the fixed save bar at bottom ── */}
+      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-3 pb-32 space-y-2">
         {visible.length === 0 && (
           <p className="py-12 text-center text-sm text-gray-400">
             {search ? 'No employees match your search.' : 'No active employees found.'}
