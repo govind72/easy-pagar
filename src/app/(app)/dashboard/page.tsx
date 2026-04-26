@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { cookies } from 'next/headers'
 import { createClient } from '@/lib/supabase/server'
+import Greeting from '@/components/Greeting'
 
 export const metadata = { title: 'Dashboard — EasyPagar' }
 
@@ -11,10 +12,6 @@ function currentMonthParam() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-01`
 }
 function fmt(n: number) { return `₹${(n||0).toLocaleString('en-IN')}` }
-function greeting() {
-  const h = new Date().getHours()
-  return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'
-}
 
 /* ── Safe fetch wrapper — never throws ───────────────── */
 async function safe<T>(fn: () => Promise<T>): Promise<{ data: T | null; error: string | null }> {
@@ -114,10 +111,7 @@ export default async function DashboardPage() {
     <div className="p-4 sm:p-6 md:p-8 space-y-8">
 
       {/* Greeting */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">{greeting()} 👋</h1>
-        <p className="text-sm text-gray-400 mt-1">{new Date().toLocaleDateString('en-IN', { weekday:'long', day:'numeric', month:'long', year:'numeric' })}</p>
-      </div>
+      <Greeting />
 
       {/* ── Section 1: Today's summary ── */}
       <section>
