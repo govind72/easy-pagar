@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import DatePicker from '@/components/DatePicker'
 import { saveAttendance, type AttendanceRow } from './actions'
 import type { Employee, Site, Attendance, AttendanceStatus } from '@/lib/types'
 
@@ -159,32 +160,12 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
             </svg>
           </button>
 
-          {/* Date label + picker
-               The input sits ABOVE the visual button (z-10, opacity-0).
-               Tapping anywhere on the label area directly hits the input,
-               so the browser opens its native date picker without JS trickery. */}
-          <div className="relative flex-1 flex justify-center">
-            {/* Visual button — purely decorative, pointer-events blocked by input on top */}
-            <div className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-800 bg-gray-50 border border-gray-200">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-              {fmtDate(initialDate)}
-            </div>
-            {/* Transparent input ON TOP — direct click target, opens native picker.
-                 opacity: 0.001 (not 0) = browser treats as visible → dispatches clicks. */}
-            <input
-              type="date"
-              value={initialDate}
-              max={today}
-              onChange={e => {
-                const v = e.target.value
-                if (v && v <= today) router.push(`/attendance?date=${v}`)
-              }}
-              className="absolute inset-0 z-10 w-full h-full cursor-pointer"
-              style={{ opacity: 0.001 }}
-            />
-          </div>
+          {/* Custom calendar date picker — handles its own open/close state */}
+          <DatePicker
+            value={initialDate}
+            max={today}
+            onChange={date => router.push(`/attendance?date=${date}`)}
+          />
 
           {/* → Next day */}
           <button
