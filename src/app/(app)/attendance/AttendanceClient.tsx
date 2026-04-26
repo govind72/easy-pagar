@@ -308,10 +308,9 @@ function EmployeeRow({
             {initials(employee.name)}
           </div>
 
-          {/* Name + rate */}
+          {/* Name */}
           <div className="flex-1 min-w-0">
             <p className="text-sm font-semibold text-gray-900 truncate">{employee.name}</p>
-            <p className="text-xs text-gray-400">₹{employee.daily_rate.toLocaleString('en-IN')}/day</p>
           </div>
 
           {/* P / ½ / A toggle */}
