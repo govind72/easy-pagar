@@ -29,6 +29,9 @@ export default async function AttendancePage({
       .from('employees')
       .select('*, default_site:sites(id, name)')
       .eq('is_active', true)
+      // Only employees who had already joined on the viewed date — an employee
+      // who joins today must not appear in (or get records saved for) past days.
+      .lte('joined_date', dateStr)
       .order('name', { ascending: true }),
     supabase
       .from('sites')

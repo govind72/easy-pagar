@@ -80,6 +80,9 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
 
   const today = todayStr()
   const isToday = initialDate === today
+  // No saved rows for this date → attendance was never marked. Derived from the
+  // prop (not state) so it clears automatically after a save revalidates the page.
+  const notMarked = initialRecords.length === 0
 
   const stats = useMemo(() => {
     const vals = Object.values(rows)
@@ -211,6 +214,18 @@ export default function AttendanceClient({ employees, sites, initialRecords, ini
           </button>
         </div>
       </div>
+
+      {/* ── Not-marked banner ──────────────────────────── */}
+      {notMarked && employees.length > 0 && (
+        <div className="px-4 sm:px-6 pt-3">
+          <div className="flex items-center gap-2 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v2m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Attendance not marked for {fmtDate(initialDate)} yet — review below and save.
+          </div>
+        </div>
+      )}
 
       {/* ── Employee rows — pb-24 already on outer div, clears save bar ── */}
       <div className="px-4 sm:px-6 py-3 space-y-2">
